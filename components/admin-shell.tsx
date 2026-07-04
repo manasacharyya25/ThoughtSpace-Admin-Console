@@ -2,13 +2,22 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FileText, LogOut } from "lucide-react";
+import { FileText, LogOut, Mail } from "lucide-react";
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 
-const NAV = [{ href: "/blog", label: "Blog posts", icon: FileText }];
+const NAV = [
+  { href: "/blog", label: "Blog posts", icon: FileText },
+  { href: "/newsletter", label: "Newsletter", icon: Mail },
+];
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
+export function AdminShell({
+  children,
+  fullWidth = false,
+}: {
+  children: React.ReactNode;
+  fullWidth?: boolean;
+}) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -21,7 +30,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+        <div
+          className={cn(
+            "mx-auto flex items-center justify-between px-4 py-4",
+            fullWidth ? "w-full" : "max-w-6xl"
+          )}
+        >
           <div className="flex items-center gap-8">
             <Link href="/blog" className="text-lg font-semibold text-slate-900">
               ThoughtSpace <span className="text-brand-500">Admin</span>
@@ -50,7 +64,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </Button>
         </div>
       </header>
-      <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+      <main
+        className={cn(
+          fullWidth ? "w-full" : "mx-auto max-w-6xl px-4 py-8"
+        )}
+      >
+        {children}
+      </main>
     </div>
   );
 }
