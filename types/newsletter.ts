@@ -55,3 +55,13 @@ export type NewsletterState = {
 export type AccordionSection = "meta" | "essays" | "reflect" | "recs" | "cta";
 
 export type AccordionState = Record<AccordionSection, boolean>;
+
+export type NewsletterRow = {
+  id: string;
+  publish_at: string | null;
+  state: NewsletterState;
+  created_at: string;
+  updated_at: string;
+};
+
+export type NewsletterStatus = "draft" | "scheduled" | "due";

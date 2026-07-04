@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   BookOpen,
   ChevronDown,
@@ -10,7 +11,14 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
+import { BlogPostPickerModal } from "@/components/newsletter/blog-post-picker-modal";
 import { cn } from "@/lib/utils";
+import { MAX_ARTICLE_CARDS } from "@/lib/newsletter/default-state";
+import {
+  inputValueToPublishAt,
+  publishAtToInputValue,
+} from "@/lib/newsletter/serialize";
+import type { BlogPostRow } from "@/types/blog";
 import type {
   AccordionSection,
   AccordionState,
@@ -19,6 +27,7 @@ import type {
 
 type ControlPanelProps = {
   state: NewsletterState;
+  publishAt: string | null;
   accordion: AccordionState;
   onAccordionToggle: (section: AccordionSection) => void;
   onUpdateField: <K extends keyof NewsletterState>(
@@ -40,6 +49,9 @@ type ControlPanelProps = {
     value: string
   ) => void;
   onUpdateCta: (key: keyof NewsletterState["community"], value: string) => void;
+  onPublishAtChange: (value: string | null) => void;
+  onAddArticle: (post: BlogPostRow | null) => void;
+  onRemoveArticle: (id: string) => void;
   onAddPrompt: () => void;
   onRemovePrompt: (id: string) => void;
   onToast: (message: string, isError?: boolean) => void;
@@ -93,6 +105,7 @@ function AccordionHeader({
 
 export function ControlPanel({
   state,
+  publishAt,
   accordion,
   onAccordionToggle,
   onUpdateField,
@@ -100,10 +113,15 @@ export function ControlPanel({
   onUpdatePrompt,
   onUpdateRec,
   onUpdateCta,
+  onPublishAtChange,
+  onAddArticle,
+  onRemoveArticle,
   onAddPrompt,
   onRemovePrompt,
   onToast,
 }: ControlPanelProps) {
+  const [pickerOpen, setPickerOpen] = useState(false);
+
   function handleAddPrompt() {
     if (state.prompts.length >= 4) {
       onToast(
@@ -121,6 +139,22 @@ export function ControlPanel({
       return;
     }
     onRemovePrompt(id);
+  }
+
+  function handleOpenArticlePicker() {
+    if (state.articles.length >= MAX_ARTICLE_CARDS) {
+      onToast(`Maximum of ${MAX_ARTICLE_CARDS} article cards per newsletter.`, true);
+      return;
+    }
+    setPickerOpen(true);
+  }
+
+  function handleRemoveArticle(id: string) {
+    if (state.articles.length <= 1) {
+      onToast("A newsletter must include at least 1 article card.", true);
+      return;
+    }
+    onRemoveArticle(id);
   }
 
   return (
@@ -200,6 +234,29 @@ export function ControlPanel({
                   onChange={(e) => onUpdateField("introText", e.target.value)}
                 />
               </div>
+              <div>
+                <label className={labelClass}>Publish date</label>
+                <input
+                  type="datetime-local"
+                  value={publishAtToInputValue(publishAt)}
+                  className={inputClass}
+                  onChange={(e) =>
+                    onPublishAtChange(inputValueToPublishAt(e.target.value))
+                  }
+                />
+                <p className="mt-1.5 text-xs text-slate-500">
+                  Optional — used later to auto-send this issue
+                </p>
+                {publishAt && (
+                  <button
+                    type="button"
+                    onClick={() => onPublishAtChange(null)}
+                    className="mt-2 text-xs font-medium text-brand-600 hover:underline"
+                  >
+                    Clear publish date
+                  </button>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -210,17 +267,41 @@ export function ControlPanel({
             section="essays"
             icon={BookOpen}
             iconClass="text-emerald-600"
-            title="2. Essays Section (3 Articles)"
+            title="2. Essays Section"
             open={accordion.essays}
             onToggle={onAccordionToggle}
           />
           {accordion.essays && (
             <div className={accordionBodyClass}>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-slate-500">
+                  {state.articles.length} of {MAX_ARTICLE_CARDS} article cards
+                </span>
+                <button
+                  type="button"
+                  onClick={handleOpenArticlePicker}
+                  disabled={state.articles.length >= MAX_ARTICLE_CARDS}
+                  className="flex items-center space-x-1 text-sm font-medium text-brand-600 hover:text-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>Add article</span>
+                </button>
+              </div>
               {state.articles.map((art, index) => (
                 <div
                   key={art.id}
-                  className={nestedCardClass}
+                  className={cn(nestedCardClass, "relative")}
                 >
+                  {state.articles.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveArticle(art.id)}
+                      className="absolute right-3.5 top-3.5 text-slate-400 transition-colors hover:text-red-600"
+                      title="Remove article"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
                   <span className="text-xs font-semibold uppercase tracking-wide text-brand-600">
                     Article Card #{index + 1}
                   </span>
@@ -550,6 +631,12 @@ export function ControlPanel({
           </span>
         </div>
       </div>
+
+      <BlogPostPickerModal
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        onSelect={onAddArticle}
+      />
     </aside>
   );
 }

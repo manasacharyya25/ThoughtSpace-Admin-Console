@@ -1,7 +1,29 @@
-import type { AccordionState, NewsletterState } from "@/types/newsletter";
+import type {
+  AccordionState,
+  NewsletterArticle,
+  NewsletterState,
+} from "@/types/newsletter";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://thoughtspace.online";
+
+export const MAX_ARTICLE_CARDS = 6;
+export const MIN_ARTICLE_CARDS = 1;
+
+export function createBlankArticle(): NewsletterArticle {
+  return {
+    id: `art-${Date.now()}`,
+    tag: "CATEGORY",
+    tagColor: "#f3f4f6",
+    tagTextColor: "#374151",
+    title: "Article title",
+    desc: "Short description for this essay card.",
+    readTime: "5 min read",
+    url: SITE_URL,
+    imageUrl:
+      "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=400",
+  };
+}
 
 export function createDefaultNewsletterState(): NewsletterState {
   return {

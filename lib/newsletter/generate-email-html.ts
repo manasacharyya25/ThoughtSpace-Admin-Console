@@ -1,4 +1,5 @@
 import type { NewsletterState } from "@/types/newsletter";
+import { NEWSLETTER_LOGO_SRC } from "@/lib/newsletter/logo";
 
 /** ThoughtSpace landing page typography — Plus Jakarta Sans */
 const FONT = "'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif";
@@ -195,14 +196,8 @@ export function generateEmailHTML(state: NewsletterState): string {
                                     <td align="left" valign="middle">
                                         <table border="0" cellpadding="0" cellspacing="0">
                                             <tr>
-                                                <td style="padding-right: 10px;">
-                                                    <table border="0" cellpadding="0" cellspacing="0" style="background-color: ${TEXT}; border-radius: 8px;">
-                                                        <tr>
-                                                            <td style="padding: 6px 8px;">
-                                                                <img src="https://thoughtspace.online/favicon.ico" alt="Logo" width="18" height="18" style="display: block; border-radius: 2px;"/>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
+                                                <td style="padding: 10px;" valign="middle">
+                                                    <img src="${a(NEWSLETTER_LOGO_SRC)}" alt="ThoughtSpace" width="32" height="32" style="display: block; border-radius: 8px;"/>
                                                 </td>
                                                 <td>
                                                     <span style="font-family: ${FONT}; font-size: 20px; font-weight: 800; color: ${TEXT}; letter-spacing: -0.5px;">thoughtspace<span style="color: ${ACCENT};">.</span></span>
@@ -347,22 +342,9 @@ export function generateEmailHTML(state: NewsletterState): string {
                         </td>
                     </tr>
                     <tr>
-                        <td align="center" style="padding-bottom: 25px;">
-                            <table border="0" cellpadding="0" cellspacing="0">
-                                <tr>
-                                    <td align="center" style="background-color: #d1fae5; border-radius: 50px; padding: 6px 16px;">
-                                        <span style="font-family: ${FONT}; font-size: 10px; font-weight: 800; color: #065f46; letter-spacing: 0.5px;">
-                                            👥 Anonymous · 1-to-1 dialogues only
-                                        </span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
                         <td align="center" style="padding: 5px 0 35px 0;">
                             <span style="font-family: ${FONT}; font-size: 9px; font-weight: 700; color: ${TEXT_MUTED}; letter-spacing: 0.8px; text-transform: uppercase;">
-                                🛡️ No profiles &bull; No pressure &bull; Just inquiry
+                                🌿 Thoughtful conversations • Anonymous by design • No social pressure
                             </span>
                         </td>
                     </tr>
