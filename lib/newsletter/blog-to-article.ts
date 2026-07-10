@@ -12,6 +12,14 @@ function formatReadTime(minutes: number | null, excerpt: string): string {
   return `${estimated} min read`;
 }
 
+/** Append CDN compress/resize params for faster newsletter loads */
+function withCompressedImage(url: string): string {
+  if (!url) return url;
+  if (url.includes("auto=compress") && url.includes("w=560")) return url;
+  const sep = url.includes("?") ? "&" : "?";
+  return `${url}${sep}auto=compress&w=560`;
+}
+
 export function blogPostToArticle(
   post: BlogPostRow,
   siteUrl: string
@@ -28,6 +36,6 @@ export function blogPostToArticle(
     desc: post.excerpt,
     readTime: formatReadTime(post.read_time_minutes, post.excerpt),
     url: `${baseUrl}/blog/${post.slug}`,
-    imageUrl: post.image_url,
+    imageUrl: withCompressedImage(post.image_url),
   };
 }
