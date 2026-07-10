@@ -41,6 +41,7 @@ export async function POST(request: Request) {
     .from("newsletters")
     .insert({
       state,
+      issue_num: state.issueNum.trim(),
       publish_at: publish_at ?? null,
       status: "draft",
     })

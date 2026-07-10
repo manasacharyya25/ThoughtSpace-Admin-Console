@@ -61,6 +61,7 @@ export type NewsletterPublishStatus = "draft" | "published";
 export type NewsletterRow = {
   id: string;
   status: NewsletterPublishStatus;
+  issue_num: string;
   publish_at: string | null;
   state: NewsletterState;
   created_at: string;

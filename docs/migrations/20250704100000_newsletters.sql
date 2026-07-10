@@ -3,6 +3,7 @@
 
 create table if not exists public.newsletters (
   id uuid primary key default gen_random_uuid(),
+  issue_num text not null default '00',
   publish_at timestamptz null,
   state jsonb not null,
   created_at timestamptz not null default now(),
@@ -12,6 +13,9 @@ create table if not exists public.newsletters (
 create index if not exists newsletters_publish_at_idx
   on public.newsletters (publish_at)
   where publish_at is not null;
+
+create index if not exists newsletters_issue_num_idx
+  on public.newsletters (issue_num);
 
 create index if not exists newsletters_updated_at_idx
   on public.newsletters (updated_at desc);

@@ -4,11 +4,14 @@ import type {
   NewsletterState,
 } from "@/types/newsletter";
 
-export function getNewsletterTitle(state: NewsletterState): string {
+export function getNewsletterTitle(
+  state: NewsletterState,
+  issueNum = state.issueNum
+): string {
   const headline = state.heroHeadlineBlack.trim();
   const truncated =
     headline.length > 48 ? `${headline.slice(0, 48).trim()}…` : headline;
-  return `Issue #${state.issueNum} · ${truncated}`;
+  return `Issue #${issueNum} · ${truncated}`;
 }
 
 export function getNewsletterScheduleStatus(

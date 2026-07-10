@@ -63,7 +63,7 @@ export function NewsletterPreviewModal({
               Newsletter preview
             </h2>
             <p className="text-xs text-slate-500">
-              Issue #{newsletter.state.issueNum} · {newsletter.state.issueDate}
+              Issue #{newsletter.issue_num} · {newsletter.state.issueDate}
             </p>
           </div>
           <div className="flex items-center gap-2">

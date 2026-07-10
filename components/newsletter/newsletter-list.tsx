@@ -103,7 +103,7 @@ export function NewsletterList({ newsletters }: NewsletterListProps) {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {newsletters.map((row) => {
-                const title = getNewsletterTitle(row.state);
+                const title = getNewsletterTitle(row.state, row.issue_num);
                 const status = row.status ?? "draft";
                 const statusMeta = NEWSLETTER_STATUS_LABELS[status];
                 const schedule = getNewsletterScheduleStatus(row.publish_at);

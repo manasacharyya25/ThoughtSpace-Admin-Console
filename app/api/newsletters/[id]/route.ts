@@ -49,6 +49,7 @@ export async function PATCH(request: Request, context: RouteContext) {
 
   if (input.state !== undefined) {
     updates.state = input.state;
+    updates.issue_num = input.state.issueNum.trim();
   }
   if (input.publish_at !== undefined) {
     updates.publish_at = input.publish_at;
