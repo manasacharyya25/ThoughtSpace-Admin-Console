@@ -9,8 +9,9 @@ import { NewsletterPreviewModal } from "@/components/newsletter/newsletter-previ
 import { Button } from "@/components/ui";
 import {
   formatPublishAt,
-  getNewsletterStatus,
+  getNewsletterScheduleStatus,
   getNewsletterTitle,
+  NEWSLETTER_SCHEDULE_LABELS,
   NEWSLETTER_STATUS_LABELS,
 } from "@/lib/newsletter/display";
 import { formatDate } from "@/lib/utils";
@@ -24,6 +25,7 @@ export function NewsletterList({ newsletters }: NewsletterListProps) {
   const router = useRouter();
   const [previewRow, setPreviewRow] = useState<NewsletterRow | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   async function handleDelete(id: string, title: string) {
     if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
@@ -40,14 +42,36 @@ export function NewsletterList({ newsletters }: NewsletterListProps) {
     router.refresh();
   }
 
+  async function handlePublishToggle(row: NewsletterRow) {
+    const endpoint =
+      row.status === "published"
+        ? `/api/newsletters/${row.id}/unpublish`
+        : `/api/newsletters/${row.id}/publish`;
+
+    setTogglingId(row.id);
+    const response = await fetch(endpoint, { method: "POST" });
+    setTogglingId(null);
+
+    if (!response.ok) {
+      alert(
+        row.status === "published"
+          ? "Failed to unpublish newsletter"
+          : "Failed to publish newsletter"
+      );
+      return;
+    }
+
+    router.refresh();
+  }
+
   return (
     <AdminShell>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-slate-900">Newsletter</h1>
           <p className="mt-1 text-sm text-slate-500">
-            {newsletters.length} saved · schedule a publish date for future
-            auto-send
+            {newsletters.length} saved · publish to make public · schedule a
+            date for future auto-send
           </p>
         </div>
         <Link href="/newsletter/new">
@@ -80,8 +104,13 @@ export function NewsletterList({ newsletters }: NewsletterListProps) {
             <tbody className="divide-y divide-slate-100">
               {newsletters.map((row) => {
                 const title = getNewsletterTitle(row.state);
-                const status = getNewsletterStatus(row.publish_at);
+                const status = row.status ?? "draft";
                 const statusMeta = NEWSLETTER_STATUS_LABELS[status];
+                const schedule = getNewsletterScheduleStatus(row.publish_at);
+                const scheduleMeta =
+                  schedule === "none"
+                    ? null
+                    : NEWSLETTER_SCHEDULE_LABELS[schedule];
 
                 return (
                   <tr key={row.id} className="hover:bg-slate-50/50">
@@ -100,6 +129,13 @@ export function NewsletterList({ newsletters }: NewsletterListProps) {
                       >
                         {statusMeta.label}
                       </span>
+                      {scheduleMeta && (
+                        <span
+                          className={`ml-2 inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${scheduleMeta.className}`}
+                        >
+                          {scheduleMeta.label}
+                        </span>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-slate-500">
                       {formatDate(row.updated_at)}
@@ -118,6 +154,14 @@ export function NewsletterList({ newsletters }: NewsletterListProps) {
                           className="text-slate-600 hover:underline"
                         >
                           Preview
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => void handlePublishToggle(row)}
+                          disabled={togglingId === row.id}
+                          className="text-slate-600 hover:underline disabled:opacity-50"
+                        >
+                          {row.status === "published" ? "Unpublish" : "Publish"}
                         </button>
                         <button
                           type="button"

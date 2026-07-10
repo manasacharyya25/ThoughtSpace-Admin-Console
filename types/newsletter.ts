@@ -56,12 +56,16 @@ export type AccordionSection = "meta" | "essays" | "reflect" | "recs" | "cta";
 
 export type AccordionState = Record<AccordionSection, boolean>;
 
+export type NewsletterPublishStatus = "draft" | "published";
+
 export type NewsletterRow = {
   id: string;
+  status: NewsletterPublishStatus;
   publish_at: string | null;
   state: NewsletterState;
   created_at: string;
   updated_at: string;
 };
 
-export type NewsletterStatus = "draft" | "scheduled" | "due";
+/** Derived from publish_at for schedule display only */
+export type NewsletterScheduleStatus = "none" | "scheduled" | "due";

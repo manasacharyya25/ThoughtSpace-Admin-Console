@@ -1,4 +1,8 @@
-import type { NewsletterState, NewsletterStatus } from "@/types/newsletter";
+import type {
+  NewsletterPublishStatus,
+  NewsletterScheduleStatus,
+  NewsletterState,
+} from "@/types/newsletter";
 
 export function getNewsletterTitle(state: NewsletterState): string {
   const headline = state.heroHeadlineBlack.trim();
@@ -7,14 +11,14 @@ export function getNewsletterTitle(state: NewsletterState): string {
   return `Issue #${state.issueNum} · ${truncated}`;
 }
 
-export function getNewsletterStatus(
+export function getNewsletterScheduleStatus(
   publishAt: string | null,
   now = Date.now()
-): NewsletterStatus {
-  if (!publishAt) return "draft";
+): NewsletterScheduleStatus {
+  if (!publishAt) return "none";
 
   const ts = new Date(publishAt).getTime();
-  if (Number.isNaN(ts)) return "draft";
+  if (Number.isNaN(ts)) return "none";
 
   return ts > now ? "scheduled" : "due";
 }
@@ -35,13 +39,23 @@ export function formatPublishAt(iso: string | null): string {
 }
 
 export const NEWSLETTER_STATUS_LABELS: Record<
-  NewsletterStatus,
+  NewsletterPublishStatus,
   { label: string; className: string }
 > = {
   draft: {
     label: "Draft",
     className: "bg-amber-100 text-amber-700",
   },
+  published: {
+    label: "Published",
+    className: "bg-green-100 text-green-700",
+  },
+};
+
+export const NEWSLETTER_SCHEDULE_LABELS: Record<
+  Exclude<NewsletterScheduleStatus, "none">,
+  { label: string; className: string }
+> = {
   scheduled: {
     label: "Scheduled",
     className: "bg-brand-100 text-brand-700",

@@ -42,6 +42,7 @@ export async function POST(request: Request) {
     .insert({
       state,
       publish_at: publish_at ?? null,
+      status: "draft",
     })
     .select("*")
     .single();
