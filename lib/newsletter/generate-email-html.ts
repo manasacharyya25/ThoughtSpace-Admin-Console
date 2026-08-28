@@ -218,7 +218,7 @@ export function generateEmailHTML(state: NewsletterState): string {
                         <td align="center" style="padding: 10px 0 30px 0;">
                             <table border="0" cellpadding="0" cellspacing="0" style="margin-bottom: 24px;">
                                 <tr>
-                                    <td align="center" style="background-color: #ffffff; border: 1px solid ${BORDER}; border-radius: 50px; padding: 7px 16px; box-shadow: 0 4px 10px rgba(28,29,30,0.03);">
+                                    <td align="center" style="background-color: #ffffff; border-radius: 50px; padding: 7px 16px; box-shadow: 0 4px 10px rgba(28,29,30,0.03);">
                                         <span style="font-size: 11px; font-family: ${FONT}; font-weight: 800; color: ${ACCENT}; letter-spacing: 1.5px; text-transform: uppercase;">
                                             ${e(state.badgeText)}
                                         </span>
